@@ -117,16 +117,17 @@ public class AccountDAOImpl implements AccountDAO
     }
 
     @Override
-    public boolean updatePassword(Account updatedAccount) 
+    public boolean updatePassword(Account updatedAccount, String newPassword) 
     {
         Connection conn = ConnectionUtil.getConnection();
 
         try
         {
-            String sql = "UPDATE account SET password = ? WHERE username = ?";
+            String sql = "UPDATE account SET password = ? WHERE username = ? and password = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, updatedAccount.getPassword());
+            ps.setString(1, newPassword);
             ps.setString(2, updatedAccount.getUsername());
+            ps.setString(3, updatedAccount.getPassword());
 
             int changeCount = ps.executeUpdate();
 

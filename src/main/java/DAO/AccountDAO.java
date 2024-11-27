@@ -30,11 +30,12 @@ public interface AccountDAO
 
     /// Update Accounts
     /**
-     * Updates password through passed Account object.
-     * @param updatedAccount Account obj with updated password
+     * Authenticates user and changes password if old info is correct
+     * @param updatedAccount Account obj with old password
+     * @param newPassword password to be added
      * @return true if successful/false if no changes were made to database
      */
-    public boolean updatePassword(Account updatedAccount);
+    public boolean updatePassword(Account updatedAccount, String newPassword);
 
     /// Delete Accounts
     /**

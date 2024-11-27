@@ -170,10 +170,11 @@ public class MessageDAOImpl implements MessageDAO
         try
         {
             // setup prepared statement
-            String sql = "UPDATE message SET message_text = ?";
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setString(1, updatedMessage.getMessage_text());
+            ps.setInt(1, updatedMessage.getMessage_id());
 
             int changeCount = ps.executeUpdate();
 
