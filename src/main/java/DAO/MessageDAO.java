@@ -50,6 +50,6 @@ public interface MessageDAO
      * @param message_id int
      * @return true if successful/ false if no change was made to database
      */
-    public boolean deleteAccountByLogin(int message_id);
+    public boolean deleteMessage(int message_id);
 
 }

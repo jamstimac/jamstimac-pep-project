@@ -19,7 +19,7 @@ public interface AccountDAO
     /**
      * @return List of all accounts in database
      */
-    public List<Account> getAllAccounts();
+    public List<Account> getAccounts();
 
     /**
      * Takes username to search database for account

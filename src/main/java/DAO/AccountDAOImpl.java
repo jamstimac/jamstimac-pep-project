@@ -53,12 +53,12 @@ public class AccountDAOImpl implements AccountDAO
             e.printStackTrace();
         }
 
-        // return null after catch runs
+        // return null after catch runs or if no generated key is created
         return null;
     }
 
     @Override
-    public List<Account> getAllAccounts()
+    public List<Account> getAccounts()
     {
         List<Account> accounts = new ArrayList<>();
 
@@ -130,9 +130,9 @@ public class AccountDAOImpl implements AccountDAO
 
             int changeCount = ps.executeUpdate();
 
-            if (changeCount == 0)
+            if (changeCount > 0)
             {
-                return false;
+                return true;
             }
 
         }
@@ -142,7 +142,7 @@ public class AccountDAOImpl implements AccountDAO
             e.printStackTrace();
         }
         
-        return true;
+        return false;
     }
 
     /**
@@ -163,9 +163,9 @@ public class AccountDAOImpl implements AccountDAO
             ps.setString(2, account.getPassword());
 
             int changeCount = ps.executeUpdate();
-            if (changeCount == 0)
+            if (changeCount > 0)
             {
-                return false;
+                return true;
             }
 
         }
@@ -174,7 +174,7 @@ public class AccountDAOImpl implements AccountDAO
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
 }
