@@ -1,5 +1,7 @@
 package Model;
 
+import kotlin.OverloadResolutionByLambdaReturnType;
+
 /**
  * This is a class that models an Account.
  *
@@ -103,6 +105,7 @@ public class Account {
         Account account = (Account) o;
         return account_id == account.account_id && username.equals(account.username) && password.equals(account.password);
     }
+
     /**
      * Overriding the default toString() method allows for easy debugging.
      * @return a String representation of this class.
