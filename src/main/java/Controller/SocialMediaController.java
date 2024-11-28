@@ -16,18 +16,71 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
+        
 
         return app;
     }
 
+    /// endpoint POST 8080/register create new account
     /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * Creates a new user within register. Usernames must be
+     * 4 characters long and an account with this username 
+     * should not already exist. Should respond with 200 OK
+     * status (will respond with 400 status if unsuccessful)
+     * @param context the Javalin Context obj manages information about request and response.
      */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
-    }
+    public void postNewUser(Context context){}
+    
+    /// endpoint POST 8080/login verify login
+    /**
+     * Verifies login based on password and username passed into the request body.
+     * Responds with 200 OK status (will respoond with 401 status if unsuccessful).
+     * @param context the Javalin Context obj manages information about request and response.
+     */
+    public void verifyUserLogin(Context context){}
+
+    /// endpoint POST 8080/messages post new message
+    /**
+     * 
+     * @param context the Javalin Context obj manages information about request and response.
+     */
+    public void postNewMessage(Context context){} 
+
+    /// endpoint GET 8080/messages get all messages
+    /**
+     * 
+     * @param context
+     */
+    public void getMessages(Context context){}
+
+
+    /// endpoint GET 8080/messages/{message_id} get message by message_id
+    /**
+     * 
+     * @param context
+     */
+    public void getMessageByID(Context context){}
+
+    /// endpoint 8080/accounts/{account_id}/messages get message by account_id
+    /**
+     * 
+     * @param context
+     */
+    public void getMessagesByUser(Context context){}
+
+    /// endpoint DELETE 8080/messages/{message_id} delete message by message_id
+    /**
+     * 
+     * @param context
+     */
+    public void deleteMessageByID(Context context){}
+
+    /// endpoint PATCH 8080/messages/{message_id} update message by message_id
+    /**
+     * 
+     * @param context
+     */
+    public void updateMessage(Context context){}
 
 
 }
