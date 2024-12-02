@@ -2,6 +2,12 @@ package Controller;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.validation.ValidationException;
+
+import Model.*;
+import Service.AccountService;
+import Service.MessageService;
+import java.util.List;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -9,6 +15,10 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+
+    private static AccountService aService = new AccountService();
+    private static MessageService mService = new MessageService();
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -17,10 +27,14 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         
+        app.post("/register", SocialMediaController::postNewUser);
+
+        app.post("/login", SocialMediaController::verifyUserLogin);
 
         return app;
     }
 
+    /// HANDLERS ///
     /// endpoint POST 8080/register create new account
     /**
      * Creates a new user within register. Usernames must be
@@ -29,29 +43,75 @@ public class SocialMediaController {
      * status (will respond with 400 status if unsuccessful)
      * @param context the Javalin Context obj manages information about request and response.
      */
-    public void postNewUser(Context context){}
-    
+    public static void postNewUser(Context context){
+        
+        try{
+            // returns a new account from context if json returns an account.class
+            // if username in context is not within database already
+            // if password is longer than 4 characters
+            // sends a ValidationException if get does not return a validated value
+            Account account = context.bodyValidator(Account.class)
+            .check(acc -> !(isUsernameWithinDB(acc.getUsername()) || acc.getUsername().isBlank()), "Username already in use or empty")
+            .check(acc -> acc.getPassword().length() > 4, "Password too short")
+            .get();
+
+            // set account in database get new account with primary key
+            Account instantiatedAccount = aService.insertAccount(account);
+
+            // post new json object
+            context.json(instantiatedAccount);
+            
+
+        }
+        catch (ValidationException e)
+        {
+            context.status(400);
+            return;
+        } 
+
+    }
+
     /// endpoint POST 8080/login verify login
     /**
      * Verifies login based on password and username passed into the request body.
      * Responds with 200 OK status (will respoond with 401 status if unsuccessful).
      * @param context the Javalin Context obj manages information about request and response.
      */
-    public void verifyUserLogin(Context context){}
+    public static void verifyUserLogin(Context context){
+        try{
+            // get entered account from body
+            // if username is in database
+            // if password matches one in database
+            Account accountToBeVerified = context.bodyValidator(Account.class)
+            .check(acc -> isUsernameWithinDB(acc.getUsername()), "Username not in database")
+            .check(acc -> isPasswordCorrect(acc.getUsername(), acc.getPassword()), "Password is incorrect")
+            .get();
+
+            // get full account from database
+            Account verifiedAccount = aService.getAccountByUsername(accountToBeVerified.getUsername());
+            context.json(verifiedAccount);
+
+        }
+        catch (ValidationException ve)
+        {
+            context.status(401);
+            return;
+        }
+    }
 
     /// endpoint POST 8080/messages post new message
     /**
      * 
      * @param context the Javalin Context obj manages information about request and response.
      */
-    public void postNewMessage(Context context){} 
+    public static void postNewMessage(Context context){} 
 
     /// endpoint GET 8080/messages get all messages
     /**
      * 
      * @param context
      */
-    public void getMessages(Context context){}
+    public static void getMessages(Context context){}
 
 
     /// endpoint GET 8080/messages/{message_id} get message by message_id
@@ -83,4 +143,34 @@ public class SocialMediaController {
     public void updateMessage(Context context){}
 
 
+    /// FUNCTIONAL METHODS ///
+    /**
+     * Check if a username is within the database.
+     * @param accToCheck
+     * @return true if username passed is within database, false otherwise
+     */
+    public static boolean isUsernameWithinDB(String newUsername) {
+        List<Account> accounts = aService.getAccounts();
+
+        return accounts.stream().anyMatch(acc -> acc.getUsername().equalsIgnoreCase(newUsername));
+
+    }
+
+    /**
+     * Filters through all accounts to then check if password is correct.
+     * Will return true if stream is empty, so be careful.
+     * @param username
+     * @param password
+     * @return true if stream is empty or password matching account is correct
+     */
+    public static boolean isPasswordCorrect(String username, String password)
+    {
+        // get all accounts
+        List<Account> accounts = aService.getAccounts();
+
+        // filter accounts for the current username
+        // check if password is correct
+        return accounts.stream().filter(acc -> acc.getUsername().equals(username))
+        .allMatch(acc -> acc.getPassword().equals(password));
+    }
 }
