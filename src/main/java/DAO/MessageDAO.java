@@ -34,7 +34,7 @@ public interface MessageDAO
      * @param time_posted_epoch long
      * @return A Message within the database (null if not found)
      */
-    public Message getMessage(int posted_by, long time_posted_epoch);
+    public Message getMessage(int message_id);
 
     /// Update messages
     /**

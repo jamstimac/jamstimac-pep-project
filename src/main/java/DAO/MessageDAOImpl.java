@@ -128,18 +128,17 @@ public class MessageDAOImpl implements MessageDAO
     }
 
     @Override
-    public Message getMessage(int posted_by, long time_posted_epoch) {
+    public Message getMessage(int message_id) {
         // Get connection to database
         Connection conn = ConnectionUtil.getConnection();
 
         try
         {
             // setup prepared statement
-            String sql = "SELECT * FROM message WHERE posted_by = ? AND time_posted_epoch = ?";
+            String sql = "SELECT * FROM message WHERE message_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
 
-            ps.setInt(1, posted_by);
-            ps.setLong(2, time_posted_epoch);
+            ps.setInt(1, message_id);
 
             // get result set
             ResultSet rs = ps.executeQuery();
@@ -174,7 +173,7 @@ public class MessageDAOImpl implements MessageDAO
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setString(1, updatedMessage.getMessage_text());
-            ps.setInt(1, updatedMessage.getMessage_id());
+            ps.setInt(2, updatedMessage.getMessage_id());
 
             int changeCount = ps.executeUpdate();
 

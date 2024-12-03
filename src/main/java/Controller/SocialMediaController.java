@@ -10,6 +10,10 @@ import Service.MessageService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
@@ -198,17 +202,94 @@ public class SocialMediaController {
      * 
      * @param context
      */
-    public static void deleteMessageByID(Context context){}
+    public static void deleteMessageByID(Context context){
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+
+        Message deletedMessage = mService.deleteMessage(message_id);
+
+        if (deletedMessage != null){
+            context.json(deletedMessage);
+        }
+        else{
+            context.result("");
+        }
+    }
 
     /// endpoint PATCH 8080/messages/{message_id} update message by message_id
     /**
      * 
      * @param context
      */
-    public static void updateMessage(Context context){}
+    public static void updateMessage(Context context){
+        // get message id
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+
+        // if message doesn't exist
+        if(!(messageExists(message_id)))
+        {
+            context.status(400).result("");
+            return;
+        }
+
+        // setup variables
+        String messageTextUpdate = "";
+        try {
+        // get an object mapper to read the json body
+        ObjectMapper om = new ObjectMapper();
+        JsonNode jNode = om.readTree(context.body());
+        // get message_text from body
+        messageTextUpdate = jNode.get("message_text").asText();
+        }
+        catch(JsonProcessingException e)
+        {
+            e.printStackTrace();
+        }
+
+        // if message text is blank
+        if (messageTextUpdate.isBlank())
+        {
+            context.status(400).result("");
+            return;
+        }
+        // if message text is larger than allowed
+        if (messageTextUpdate.length() > 255)
+        {
+            context.status(400).result("");
+            return;
+        }
+
+        // else get original message
+        Message msg = mService.getMessage(message_id);
+        // set new text
+        msg.setMessage_text(messageTextUpdate);
+        // update this message
+        Message updatedMessage = mService.updateMessage(msg);
+
+        // if this returns an updated message
+        if (updatedMessage != null){
+            // return it in body
+            context.json(updatedMessage);
+        }
+        else{
+            // else error
+            context.status(400).result("");
+        }
+    }
+
 
 
     /// FUNCTIONAL METHODS ///
+    public static boolean messageExists(int message_id)
+    {
+        Message msg = mService.getMessage(message_id);
+
+        if (msg != null){
+            return true;
+        }
+        
+        return false;
+    }
+
     /**
      * Check if a username is within the database.
      * @param accToCheck

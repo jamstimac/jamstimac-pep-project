@@ -48,24 +48,42 @@ public class MessageService
         return messages;
     }
 
-    public Message getMessage(int posted_by, long time_posted_epoch)
+    public Message getMessage(int message_id)
     {
-        Message msg = mDAO.getMessage(posted_by, time_posted_epoch);
+        Message msg = mDAO.getMessage(message_id);
 
         return msg;
     }
 
-    public boolean updateMessage(Message updatedMessage)
+    public Message updateMessage(Message updatedMessage)
     {
         boolean didUpdate = mDAO.updateMessage(updatedMessage);
 
-        return didUpdate;
+        if(didUpdate)
+        {
+            return mDAO.getMessage(updatedMessage.getMessage_id());
+        }
+        else
+        {
+            return null;
+        }
     }
 
-    public boolean deleteMessage(int message_id)
+    public Message deleteMessage(int message_id)
     {
+        // get message by id
+        Message deletedMessage = mDAO.getMessage(message_id);
+
+        // delete message
         boolean didDelete = mDAO.deleteMessage(message_id);
 
-        return didDelete;
+        // if true
+        if (didDelete){
+            //return deleted message
+            return deletedMessage;
+        }
+
+        // else return null
+        return null;
     }
 }
