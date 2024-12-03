@@ -8,7 +8,6 @@ import Model.*;
 import Service.AccountService;
 import Service.MessageService;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
