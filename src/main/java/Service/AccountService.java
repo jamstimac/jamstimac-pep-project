@@ -50,6 +50,13 @@ public class AccountService
         return accounts;
     }
 
+    public Account getAccount(int account_id)
+    {
+        Account account = aDAO.getAccount(account_id);
+
+        return account;
+    }
+
     /**
      * Takes a username from input and returns the appropriate account
      * @param username

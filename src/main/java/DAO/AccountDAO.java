@@ -22,6 +22,13 @@ public interface AccountDAO
     public List<Account> getAccounts();
 
     /**
+     * Get an account by its account id
+     * @param account_id
+     * @return Account object
+     */
+    public Account getAccount(int account_id);
+    
+    /**
      * Takes username to search database for account
      * @param username string given by user
      * @return Account with associated username

@@ -8,6 +8,7 @@ import Model.*;
 import Service.AccountService;
 import Service.MessageService;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -28,8 +29,19 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         
         app.post("/register", SocialMediaController::postNewUser);
-
         app.post("/login", SocialMediaController::verifyUserLogin);
+
+        app.post("/messages", SocialMediaController::postNewMessage);
+
+        app.get("/messages", SocialMediaController::getMessages);
+        app.get("/messages/{message_id}", SocialMediaController::getMessageByID);
+        app.get("/accounts/{account_id}/messages", SocialMediaController::getMessagesByUser);
+
+        app.delete("/messages/{message_id}", SocialMediaController::deleteMessageByID);
+
+        app.patch("/messages/{message_id}", SocialMediaController::updateMessage);
+
+
 
         return app;
     }
@@ -51,7 +63,8 @@ public class SocialMediaController {
             // if password is longer than 4 characters
             // sends a ValidationException if get does not return a validated value
             Account account = context.bodyValidator(Account.class)
-            .check(acc -> !(isUsernameWithinDB(acc.getUsername()) || acc.getUsername().isBlank()), "Username already in use or empty")
+            .check(acc -> !(isUsernameWithinDB(acc.getUsername())), "Username already in use")
+            .check(acc -> !(acc.getUsername().isBlank()), "Username is blank")
             .check(acc -> acc.getPassword().length() > 4, "Password too short")
             .get();
 
@@ -63,7 +76,7 @@ public class SocialMediaController {
             
 
         }
-        catch (ValidationException e)
+        catch (ValidationException ve)
         {
             context.status(400);
             return;
@@ -104,14 +117,36 @@ public class SocialMediaController {
      * 
      * @param context the Javalin Context obj manages information about request and response.
      */
-    public static void postNewMessage(Context context){} 
+    public static void postNewMessage(Context context){
+        try {
+            Message msg = context.bodyValidator(Message.class)
+            .check(mess -> !(mess.getMessage_text().isBlank()), "Message blank")
+            .check(mess -> mess.getMessage_text().length() <= 255, "Message too large")
+            .check(mess -> checkUserByID(mess.getPosted_by()), "Message poster is not valid")
+            .get();
+
+            Message instantiatedMsg = mService.insertMessage(msg);
+            context.json(instantiatedMsg);
+
+        }
+        catch (ValidationException ve)
+        {
+            context.status(400);
+            return;
+        }
+
+    } 
 
     /// endpoint GET 8080/messages get all messages
     /**
-     * 
+     * Get all messages from the database even if no messages exist
      * @param context
      */
-    public static void getMessages(Context context){}
+    public static void getMessages(Context context){
+        List<Message> messages = mService.getMessages();
+
+        context.json(messages);
+    }
 
 
     /// endpoint GET 8080/messages/{message_id} get message by message_id
@@ -119,28 +154,58 @@ public class SocialMediaController {
      * 
      * @param context
      */
-    public void getMessageByID(Context context){}
+    public static void getMessageByID(Context context){
+        // get all messages
+        List<Message> messages = mService.getMessages();
+
+        // get message_id from context
+        int msg_id = Integer.parseInt(context.pathParam("message_id"));
+
+        // use a stream to return a new message array containing our singular message
+        Message[] userMessage = messages.stream()
+        .filter(msg -> msg.getMessage_id() == msg_id)
+        .toArray(Message[]::new);
+
+        // if message found
+        if (userMessage.length > 0)
+        {
+            // return that message
+            context.json(userMessage[0]);
+        }
+        else 
+        {
+            // else return empty string
+            context.result("");
+        }
+    }
 
     /// endpoint 8080/accounts/{account_id}/messages get message by account_id
     /**
      * 
      * @param context
      */
-    public void getMessagesByUser(Context context){}
+    public static void getMessagesByUser(Context context){
+        int account_id = Integer.parseInt(context.pathParam("account_id"));
+
+        List<Message> msgsByUser = mService.getMessages(account_id);
+
+        context.json(msgsByUser);
+        
+    }
 
     /// endpoint DELETE 8080/messages/{message_id} delete message by message_id
     /**
      * 
      * @param context
      */
-    public void deleteMessageByID(Context context){}
+    public static void deleteMessageByID(Context context){}
 
     /// endpoint PATCH 8080/messages/{message_id} update message by message_id
     /**
      * 
      * @param context
      */
-    public void updateMessage(Context context){}
+    public static void updateMessage(Context context){}
 
 
     /// FUNCTIONAL METHODS ///
@@ -172,5 +237,23 @@ public class SocialMediaController {
         // check if password is correct
         return accounts.stream().filter(acc -> acc.getUsername().equals(username))
         .allMatch(acc -> acc.getPassword().equals(password));
+    }
+
+    /**
+     * Checks if an account exists. Account id is stored in message as
+     * posted by.
+     * @param account_id
+     * @return true if returned account is not null
+     */
+    public static boolean checkUserByID(int account_id)
+    {
+        Account account = aService.getAccount(account_id);
+
+        if (account != null)
+        {
+            return true;
+        }
+
+        return false;
     }
 }
