@@ -145,66 +145,66 @@ public class AccountDAOImpl implements AccountDAO
         return null;
     }
 
-    @Override
-    public boolean updatePassword(Account updatedAccount, String newPassword) 
-    {
-        Connection conn = ConnectionUtil.getConnection();
+    // @Override
+    // public boolean updatePassword(Account updatedAccount, String newPassword) 
+    // {
+    //     Connection conn = ConnectionUtil.getConnection();
 
-        try
-        {
-            String sql = "UPDATE account SET password = ? WHERE username = ? and password = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, newPassword);
-            ps.setString(2, updatedAccount.getUsername());
-            ps.setString(3, updatedAccount.getPassword());
+    //     try
+    //     {
+    //         String sql = "UPDATE account SET password = ? WHERE username = ? and password = ?";
+    //         PreparedStatement ps = conn.prepareStatement(sql);
+    //         ps.setString(1, newPassword);
+    //         ps.setString(2, updatedAccount.getUsername());
+    //         ps.setString(3, updatedAccount.getPassword());
 
-            int changeCount = ps.executeUpdate();
+    //         int changeCount = ps.executeUpdate();
 
-            if (changeCount > 0)
-            {
-                return true;
-            }
+    //         if (changeCount > 0)
+    //         {
+    //             return true;
+    //         }
 
-        }
-        catch (SQLException e)
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+    //     }
+    //     catch (SQLException e)
+    //     {
+    //         System.out.println(e.getMessage());
+    //         e.printStackTrace();
+    //     }
         
-        return false;
-    }
+    //     return false;
+    // }
 
-    /**
-     * @param account Account to be deleted
-     * @return true if successfully deleted/ false if no changes made to database
-     */
-    @Override
-    public boolean deleteAccount(Account account) 
-    {
-        Connection conn = ConnectionUtil.getConnection();
+    // /**
+    //  * @param account Account to be deleted
+    //  * @return true if successfully deleted/ false if no changes made to database
+    //  */
+    // @Override
+    // public boolean deleteAccount(Account account) 
+    // {
+    //     Connection conn = ConnectionUtil.getConnection();
 
-        try
-        {
-            String sql = "DELETE FROM account WHERE username = ?  AND password = ?";
+    //     try
+    //     {
+    //         String sql = "DELETE FROM account WHERE username = ?  AND password = ?";
 
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, account.getUsername());
-            ps.setString(2, account.getPassword());
+    //         PreparedStatement ps = conn.prepareStatement(sql);
+    //         ps.setString(1, account.getUsername());
+    //         ps.setString(2, account.getPassword());
 
-            int changeCount = ps.executeUpdate();
-            if (changeCount > 0)
-            {
-                return true;
-            }
+    //         int changeCount = ps.executeUpdate();
+    //         if (changeCount > 0)
+    //         {
+    //             return true;
+    //         }
 
-        }
-        catch (SQLException e)
-        {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-    }
+    //     }
+    //     catch (SQLException e)
+    //     {
+    //         System.out.println(e.getMessage());
+    //         e.printStackTrace();
+    //     }
+    //     return false;
+    // }
 
 }

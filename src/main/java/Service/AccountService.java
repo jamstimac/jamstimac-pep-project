@@ -69,28 +69,28 @@ public class AccountService
         return retAccount;
     }
 
-    /**
-     * Updates password based on userAccount credentials
-     * @param updatedAccount Account obj
-     * @param newPassword string
-     * @return didUpdate boolean 
-     */
-    public boolean updatePassword(Account updatedAccount, String newPassword)
-    {
-        boolean didUpdate = aDAO.updatePassword(updatedAccount, newPassword);
+    // /**
+    //  * Updates password based on userAccount credentials
+    //  * @param updatedAccount Account obj
+    //  * @param newPassword string
+    //  * @return didUpdate boolean 
+    //  */
+    // public boolean updatePassword(Account updatedAccount, String newPassword)
+    // {
+    //     boolean didUpdate = aDAO.updatePassword(updatedAccount, newPassword);
 
-        return didUpdate;
-    }
+    //     return didUpdate;
+    // }
 
-    /**
-     * Delete account from table in database.
-     * @param account Account obj
-     * @return boolean didDelete
-     */
-    public boolean deleteAccount(Account account)
-    {
-        boolean didDelete = aDAO.deleteAccount(account);
+    // /**
+    //  * Delete account from table in database.
+    //  * @param account Account obj
+    //  * @return boolean didDelete
+    //  */
+    // public boolean deleteAccount(Account account)
+    // {
+    //     boolean didDelete = aDAO.deleteAccount(account);
 
-        return didDelete;
-    }
+    //     return didDelete;
+    // }
 }

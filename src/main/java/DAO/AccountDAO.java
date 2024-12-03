@@ -36,19 +36,19 @@ public interface AccountDAO
     public Account getAccountByUsername(String username);
 
     /// Update Accounts
-    /**
-     * Authenticates user and changes password if old info is correct
-     * @param updatedAccount Account obj with old password
-     * @param newPassword password to be added
-     * @return true if successful/false if no changes were made to database
-     */
-    public boolean updatePassword(Account updatedAccount, String newPassword);
+    // /**
+    //  * Authenticates user and changes password if old info is correct
+    //  * @param updatedAccount Account obj with old password
+    //  * @param newPassword password to be added
+    //  * @return true if successful/false if no changes were made to database
+    //  */
+    // public boolean updatePassword(Account updatedAccount, String newPassword);
 
     /// Delete Accounts
-    /**
-     * Deletes account from database.
-     * @param account Account to be deleted
-     * @return true if successfully deleted/ false if no changes made to database
-     */
-    public boolean deleteAccount(Account account);
+    // /**
+    //  * Deletes account from database.
+    //  * @param account Account to be deleted
+    //  * @return true if successfully deleted/ false if no changes made to database
+    //  */
+    // public boolean deleteAccount(Account account);
 }
