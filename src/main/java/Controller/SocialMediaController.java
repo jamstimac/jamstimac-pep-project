@@ -229,7 +229,7 @@ public class SocialMediaController {
         {
             context.status(400).result("");
             return;
-        }
+        } 
 
         // setup variables
         String messageTextUpdate = "";
